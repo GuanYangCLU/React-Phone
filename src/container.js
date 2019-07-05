@@ -24,11 +24,10 @@ class Container extends Component {
           <Item text='HW4' link='/hw4' />
         </div>
         <div>
-          {/* <Link to='/'>Back</Link> */}
+          <Item text='HW5' link='/hw5' />
           <Item text='6' />
           <Item text='7' />
           <Item text='8' />
-          <Item text='1' />
         </div>
         <div>
           {/* <Link to='/'>Back</Link> */}

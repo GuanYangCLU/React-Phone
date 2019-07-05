@@ -8,7 +8,8 @@ class Homeworkgithub extends Component {
     this.state = {
       data: [],
       isLoading: false,
-      detail: []
+      detail: [], // 用obj方便定位取你想要的
+      err: null
     };
   }
 
@@ -16,11 +17,14 @@ class Homeworkgithub extends Component {
     axios
       .get('https://api.github.com/users?per_page=100')
       .then(res => {
-        const arr = [...res.data];
+        // const arr = [...res.data];
         // console.log(typeof res.data, res.data);
-        this.setState({ data: arr });
+        this.setState({ data: res.data });
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        console.log(err);
+        this.setState({ err: err.data });
+      });
   }
 
   showDetail = git => {
@@ -44,7 +48,7 @@ class Homeworkgithub extends Component {
   };
 
   render() {
-    const { data, isLoading, detail } = this.state;
+    const { data, isLoading, detail, err } = this.state;
     const detailArr = ['Name: ', 'Location: ', 'Followers: ', 'Followings: '];
     return (
       <div className='container'>
@@ -56,15 +60,11 @@ class Homeworkgithub extends Component {
           {data.map(git => {
             return (
               <li
+                key={git.id}
                 style={{ listStyle: 'none' }}
                 onClick={() => this.showDetail(git)}
               >
                 {git.id} {git.login}
-                {git.login.length < 5
-                  ? '\t\t\t'
-                  : git.login.length < 13
-                  ? '\t\t'
-                  : '\t'}
                 <img src={git.avatar_url} style={{ width: 30, height: 30 }} />
               </li>
             );
