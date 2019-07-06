@@ -11,7 +11,9 @@ import Homeworkcounter from './homeworkcounter';
 import Homeworkmodal from './homeworkmodal';
 import Homeworkgithub from './homeworkgithub';
 import Homeworkcolorbar from './homeworkcolorbar';
+import Homeworktodolist from './homeworktodolist';
 import Login from './login';
+import Homeworktaginput from './homeworktaginput';
 
 class App extends Component {
   constructor(props) {
@@ -26,7 +28,7 @@ class App extends Component {
 
   render() {
     const textStyle = {
-      color: 'red',
+      color: 'black',
       margin: 20,
       position: 'relative',
       height: '550px'
@@ -45,6 +47,8 @@ class App extends Component {
             <Route path='/hw3' component={Homeworkmodal} />
             <Route path='/hw4' component={Homeworkgithub} />
             <Route path='/hw5' component={Homeworkcolorbar} />
+            <Route path='/hw6' component={Homeworktodolist} />
+            <Route path='/hw7' component={Homeworktaginput} />
             <Route
               exact
               path='/login'

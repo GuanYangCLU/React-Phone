@@ -13,25 +13,30 @@ class Homeworkcolorbar extends Component {
     // this.setState({ postionR: e.screenX });
     document.onmousemove = e => {
       //   console.log(e.target.innerText);
+      // 里面加text比id更好控制，否则鼠标离开滑块会不好控制
+      let pos = e.screenX - 120;
+      if (pos < 0) pos = 0;
+      else if (pos > 256) pos = 256;
+
       switch (e.target.innerText) {
         case 'r':
           this.setState({
-            positionR: e.screenX - 100
+            positionR: pos // need adjust everytime
           });
           break;
         case 'g':
           this.setState({
-            positionG: e.screenX - 100
+            positionG: pos
           });
           break;
         case 'b':
           this.setState({
-            positionB: e.screenX - 100
+            positionB: pos
           });
           break;
         case 'a':
           this.setState({
-            positionA: e.screenX - 100
+            positionA: pos
           });
           break;
         default:
@@ -58,6 +63,7 @@ class Homeworkcolorbar extends Component {
       width: 256,
       height: 5,
       top: 15,
+      left: 25,
       position: 'relative',
       borderRadius: '2px'
     };
@@ -67,12 +73,26 @@ class Homeworkcolorbar extends Component {
         border: '',
         width: 25,
         height: 25,
-        left: `${rgba}px`,
+        left: `${rgba + 13}px`,
         top: 0,
         position: 'relative',
         borderRadius: '100%',
-        textAlign: 'center'
+        textAlign: 'center',
+        userSelect: 'none'
       };
+    };
+    let txtstyle = {
+      // color: `rgba(${positionA / 256 < 0.5 ? positionR : 256 - positionR},
+      //   ${positionA / 256 < 0.5 ? positionG : 256 - positionG},
+      // ${positionA / 256 < 0.5 ? positionB : 256 - positionB},
+      // ${positionA / 256 > 0.5 ? positionA / 256 : 1 - positionA / 256})`
+      color:
+        //   positionA / 256 > 0.5
+        //     ? `rgba(${256 - positionR},
+        //   ${256 - positionG},
+        // ${256 - positionB},
+        // ${positionA / 256})`:
+        'black'
     };
     return (
       <div className='container' style={cbstyle}>
@@ -81,11 +101,13 @@ class Homeworkcolorbar extends Component {
           <div className='rail' style={railstyle} />
           <div
             className='cube'
+            id='r'
             style={cubestyle(positionR)}
             onMouseDown={e => this.dragStart(e)}
           >
             r
           </div>
+          <div style={txtstyle}>R: {positionR}</div>
         </div>
         {/* bar g */}
         <div className='bar'>
@@ -93,11 +115,13 @@ class Homeworkcolorbar extends Component {
 
           <div
             className='cube'
+            id='g'
             style={cubestyle(positionG)}
             onMouseDown={e => this.dragStart(e)}
           >
             g
           </div>
+          <div style={txtstyle}>G: {positionG}</div>
         </div>
         {/* bar b */}
         <div className='bar'>
@@ -105,11 +129,13 @@ class Homeworkcolorbar extends Component {
 
           <div
             className='cube'
+            id='b'
             style={cubestyle(positionB)}
             onMouseDown={e => this.dragStart(e)}
           >
             b
           </div>
+          <div style={txtstyle}>B: {positionB}</div>
         </div>
         {/* bar a (0-1) */}
         <div className='bar'>
@@ -117,11 +143,13 @@ class Homeworkcolorbar extends Component {
 
           <div
             className='cube'
+            id='a'
             style={cubestyle(positionA)}
             onMouseDown={e => this.dragStart(e)}
           >
             a
           </div>
+          <div style={txtstyle}>A: {(positionA / 256).toFixed(2)}</div>
         </div>
       </div>
     );

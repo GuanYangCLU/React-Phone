@@ -25,8 +25,8 @@ class Container extends Component {
         </div>
         <div>
           <Item text='HW5' link='/hw5' />
-          <Item text='6' />
-          <Item text='7' />
+          <Item text='HW6' link='/hw6' />
+          <Item text='HW7' link='/hw7' />
           <Item text='8' />
         </div>
         <div>
