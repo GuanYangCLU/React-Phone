@@ -9,14 +9,19 @@ import axios from 'axios';
 class Homeworkemail extends Component {
   constructor(props) {
     super(props);
-    this.state = { email: [], filter: 'inbox', Error: null };
+    this.state = { curId: null, email: [], filter: 'inbox', Error: null };
   }
 
   componentDidMount() {
     axios
       .get('http://api.haochuan.io/emails')
       .then(res => {
-        this.setState({ email: res.data.emailData });
+        let i = 0;
+        this.setState({
+          email: res.data.emailData.map(item => {
+            return { ...item, id: ++i }; // Math.random().toString()
+          })
+        });
       })
       .catch(err => {
         console.log(err);
@@ -24,20 +29,31 @@ class Homeworkemail extends Component {
       });
   }
 
-  handleList = e => {
-    this.setState();
+  handleList = name => {
+    this.setState({ filter: name });
+  };
+
+  handleContent = e => {
+    // console.log(e.target);
+    this.setState({
+      curId: e.target.id,
+      email: this.state.email.map(item => {
+        if (!item.read) return { ...item, read: true };
+        else return item;
+      })
+    });
   };
 
   render() {
-    const navArray = ['Inbox', 'Sent', 'Draft', 'Trash'];
-    const { email, filter, Error } = this.state;
+    const navArray = ['inbox', 'sent', 'draft', 'trash'];
+    const { curId, email, filter, Error } = this.state;
     return (
       <div className='container'>
         <div className='email-nav'>
           <div>Compose</div>
           {navArray.map(item => {
             return (
-              <div id={item} onClick={e => this.handleList(e)}>
+              <div id={item} onClick={() => this.handleList(item)}>
                 {item}
               </div>
             );
@@ -51,16 +67,31 @@ class Homeworkemail extends Component {
             })
             .map(item => {
               return (
-                <div style={{ border: '1px solid black' }}>
-                  <div>{item.subject}</div>
-                  <div>{item.from}</div>
-                  <div>{item.time.slice(10, 19)}</div>
+                <div
+                  id={item.id}
+                  key={item.id}
+                  style={{
+                    border: '1px solid black',
+                    fontSize: 8
+                  }}
+                  onClick={e => this.handleContent(e)}
+                >
+                  {item.subject} <br />
+                  {item.from} {item.time.slice(0, 10)}
                 </div>
               );
             })}
         </div>
 
-        <div className='email-content' />
+        <div className='email-content' style={{ fontSize: 8 }}>
+          {email
+            .filter(item => {
+              return item.id == curId;
+            })
+            .map(item => {
+              return item.message;
+            })}
+        </div>
       </div>
     );
   }
