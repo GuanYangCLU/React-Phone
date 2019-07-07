@@ -14,6 +14,7 @@ import Homeworkcolorbar from './homeworkcolorbar';
 import Homeworktodolist from './homeworktodolist';
 import Login from './login';
 import Homeworktaginput from './homeworktaginput';
+import Homeworkemail from './homeworkemail';
 
 class App extends Component {
   constructor(props) {
@@ -49,6 +50,7 @@ class App extends Component {
             <Route path='/hw5' component={Homeworkcolorbar} />
             <Route path='/hw6' component={Homeworktodolist} />
             <Route path='/hw7' component={Homeworktaginput} />
+            <Route path='/hw8' component={Homeworkemail} />
             <Route
               exact
               path='/login'
