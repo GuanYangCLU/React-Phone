@@ -6,10 +6,21 @@ import axios from 'axios';
 // subject, from to, time, message, DELETE to Trash
 
 // compose: unnecessary
+// curId: show detail email
+// ==, != 判定id的都是因为id生成器的局限，换成更好的id generation则可以使用===, !==
+// setState 浅比较下不触发 rerender
 class Homeworkemail extends Component {
   constructor(props) {
     super(props);
-    this.state = { curId: null, email: [], filter: 'inbox', Error: null };
+    this.state = {
+      curId: null,
+      email: [],
+      inbox: [],
+      trash: [],
+      filter: 'inbox',
+      useless: 0,
+      Error: null
+    };
   }
 
   componentDidMount() {
@@ -23,6 +34,12 @@ class Homeworkemail extends Component {
           })
         });
       })
+      .then(
+        this.setState({
+          inbox: [...this.state.email.filter(item => item.read === 'false')],
+          trash: [...this.state.email.filter(item => item.tag === 'trash')]
+        })
+      )
       .catch(err => {
         console.log(err);
         this.setState({ Error: err });
@@ -30,31 +47,68 @@ class Homeworkemail extends Component {
   }
 
   handleList = name => {
-    this.setState({ filter: name });
+    this.setState({ curId: null, filter: name });
   };
 
   handleContent = e => {
-    // console.log(e.target);
+    // console.log(this.state.email);
     this.setState({
       curId: e.target.id,
       email: this.state.email.map(item => {
-        if (!item.read) return { ...item, read: true };
+        if (item.read === 'false' && item.id == e.target.id)
+          return { ...item, read: 'true' };
         else return item;
-      })
+      }),
+      inbox: [...this.state.email.filter(item => item.read === 'false')]
     });
+  };
+
+  handleDelete = e => {
+    // console.log(this.state.email);
+    this.setState({
+      curId: null,
+
+      email: [
+        ...this.state.email.filter(item => item.id != e.target.id),
+        this.state.email
+          .filter(item => item.id == e.target.id)
+          .map(item => {
+            // console.log(item);
+            return { ...item, tag: 'trash' };
+          })[0]
+      ],
+
+      trash: [...this.state.email.filter(item => item.tag === 'trash')]
+    });
+    // console.log(this.state.trash);
   };
 
   render() {
     const navArray = ['inbox', 'sent', 'draft', 'trash'];
-    const { curId, email, filter, Error } = this.state;
+    const { curId, email, inbox, trash, filter, Error } = this.state;
+    // const unreadlen = this.state.inbox.length;
+    // const trashlen = this.state.trash.length;
     return (
       <div className='container'>
         <div className='email-nav'>
           <div>Compose</div>
           {navArray.map(item => {
+            let num = 0;
+            switch (item) {
+              case 'inbox':
+                num = inbox.length;
+
+                break;
+              case 'trash':
+                num = trash.length;
+                break;
+              default:
+                // num = -1;
+                break;
+            }
             return (
               <div id={item} onClick={() => this.handleList(item)}>
-                {item}
+                {item} {num}
               </div>
             );
           })}
@@ -89,7 +143,22 @@ class Homeworkemail extends Component {
               return item.id == curId;
             })
             .map(item => {
-              return item.message;
+              return (
+                <div>
+                  <div>
+                    <div>
+                      {item.subject}{' '}
+                      <button id={item.id} onClick={e => this.handleDelete(e)}>
+                        x
+                      </button>
+                    </div>
+                    <div>
+                      {item.from} - {item.time}
+                    </div>
+                  </div>
+                  <div>{item.message}</div>
+                </div>
+              );
             })}
         </div>
       </div>
